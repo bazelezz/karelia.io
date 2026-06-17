@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Банный комплекс «Карелия»</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #faf6f1;
+            --bg-warm: #f0e8df;
+            --bg-wood: #c9a87c;
+            --bg-wood-dark: #a07850;
+            --bg-wood-light: #e8d5bc;
+            --accent: #5c8a6e;
+            --accent-light: #7aab8c;
+            --accent-dark: #3d6b4f;
+            --text: #3a2e25;
+            --text-light: #6b5c50;
+            --text-muted: #9a8b7d;
+            --cream: #fff8f0;
+            --border: rgba(160, 120, 80, 0.15);
+            --shadow: rgba(60, 40, 20, 0.08);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+
+        h1, h2, h3, h4 { font-family: 'Playfair Display', serif; font-weight: 600; }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(25px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+
+        /* NAV */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            padding: 1rem 6%;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(250, 246, 241, 0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            transition: padding 0.3s;
+        }
+        nav.scrolled { padding: 0.7rem 6%; }
+        .nav-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem; font-weight: 700; color: var(--accent-dark);
+            text-decoration: none; letter-spacing: 0.5px;
+        }
+        .nav-logo em { font-style: normal; color: var(--bg-wood-dark); }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a {
+            color: var(--text-light); text-decoration: none; font-size: 0.88rem;
+            font-weight: 500; letter-spacing: 0.3px; transition: color 0.3s;
+            position: relative;
+        }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -3px; left: 0;
+            width: 0; height: 2px; background: var(--accent); transition: width 0.3s;
+        }
+        .nav-links a:hover { color: var(--accent); }
+        .nav-links a:hover::after { width: 100%; }
+
+        .nav-burger { display: none; background: none; border: none; cursor: pointer; }
+        .nav-burger span {
+            display: block; width: 22px; height: 2px; background: var(--text);
+            margin: 5px 0; transition: 0.3s;
+        }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
+            background: linear-gradient(170deg, var(--bg) 0%, var(--bg-warm) 50%, #e6d4bf 100%);
+        }
+        .hero::before {
+            content: ''; position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse at 30% 40%, rgba(92,138,110,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 60%, rgba(201,168,124,0.12) 0%, transparent 40%);
+        }
+        .hero-steam {
+            position: absolute; bottom: 0; left: 0; right: 0; height: 40%;
+            background: linear-gradient(to top, rgba(255,255,255,0.5), transparent);
+            pointer-events: none;
+        }
+        .hero-content { text-align: center; position: relative; z-index: 2; padding: 0 2rem; }
+        .hero-icon { font-size: 4rem; margin-bottom: 1.5rem; filter: grayscale(0.2); }
+        .hero h1 {
+            font-size: clamp(2.8rem, 6vw, 5rem); line-height: 1.1;
+            color: var(--text); margin-bottom: 1rem;
+        }
+        .hero h1 em { color: var(--accent-dark); font-style: italic; }
+        .hero-sub {
+            font-size: 1.15rem; color: var(--text-light); max-width: 480px;
+            margin: 0 auto 2.5rem; font-weight: 300;
+        }
+        .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        .btn {
+            padding: 0.9rem 2.2rem; border-radius: 6px; font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.88rem; font-weight: 600; letter-spacing: 0.8px;
+            text-transform: uppercase; text-decoration: none; cursor: pointer;
+            transition: all 0.35s; border: none; display: inline-block;
+        }
+        .btn-green { background: var(--accent); color: #fff; }
+        .btn-green:hover { background: var(--accent-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(92,138,110,0.25); }
+        .btn-wood { background: var(--bg-wood); color: #fff; }
+        .btn-wood:hover { background: var(--bg-wood-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(160,120,80,0.25); }
+        .btn-ghost { background: transparent; color: var(--accent-dark); border: 2px solid var(--accent); }
+        .btn-ghost:hover { background: var(--accent); color: #fff; }
+
+        .hero-scroll {
+            position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+            display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+            animation: bob 2.5s ease-in-out infinite;
+        }
+        .hero-scroll span { font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); }
+        .hero-scroll i { width: 18px; height: 18px; border-right: 2px solid var(--accent); border-bottom: 2px solid var(--accent); transform: rotate(45deg); }
+        @keyframes bob { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
+
+        /* SECTIONS */
+        .section { padding: 6rem 6%; position: relative; }
+        .section-head { text-align: center; margin-bottom: 3.5rem; }
+        .section-tag {
+            display: inline-block; font-size: 0.72rem; letter-spacing: 3px;
+            text-transform: uppercase; color: var(--accent); margin-bottom: 0.8rem; font-weight: 600;
+        }
+        .section-title { font-size: clamp(1.8rem, 3.5vw, 2.6rem); color: var(--text); margin-bottom: 0.8rem; }
+        .section-line { width: 50px; height: 2px; background: var(--bg-wood); margin: 1.2rem auto 0; border-radius: 1px; }
+
+        /* SERVICES */
+        .svc-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.8rem; max-width: 1100px; margin: 0 auto;
+        }
+        .svc-card {
+            background: var(--cream); border: 1px solid var(--border);
+            border-radius: 10px; padding: 2rem; position: relative;
+            transition: transform 0.35s, box-shadow 0.35s;
+        }
+        .svc-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px var(--shadow); }
+        .svc-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            border-radius: 10px 10px 0 0; opacity: 0; transition: opacity 0.35s;
+        }
+        .svc-card:hover::before { opacity: 1; }
+        .svc-emoji { font-size: 2.2rem; margin-bottom: 1rem; }
+        .svc-card h3 { font-size: 1.2rem; color: var(--text); margin-bottom: 0.5rem; }
+        .svc-card p { color: var(--text-light); font-size: 0.92rem; margin-bottom: 1.2rem; line-height: 1.65; }
+        .svc-price { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--accent-dark); font-weight: 700; }
+        .svc-price small { font-size: 0.8rem; color: var(--text-muted); font-weight: 400; }
+
+        /* ABOUT */
+        .about-row { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+        .about-text h3 { font-size: 1.6rem; color: var(--text); margin-bottom: 1rem; }
+        .about-text p { color: var(--text-light); margin-bottom: 1rem; line-height: 1.8; }
+        .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+        .stat-box {
+            text-align: center; padding: 1.3rem; background: var(--cream);
+            border-radius: 8px; border: 1px solid var(--border);
+        }
+        .stat-box .num { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--accent-dark); font-weight: 700; }
+        .stat-box .lbl { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+        /* GALLERY */
+        .gall-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 1rem; max-width: 1000px; margin: 0 auto;
+        }
+        .gall-item {
+            border-radius: 10px; overflow: hidden; position: relative;
+            background: var(--bg-warm); border: 1px solid var(--border);
+            aspect-ratio: 4/3; cursor: pointer;
+        }
+        .gall-item:first-child { grid-column: span 2; grid-row: span 2; aspect-ratio: auto; }
+        .gall-ph {
+            width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; background: linear-gradient(135deg, var(--bg-warm), var(--bg-wood-light));
+            transition: transform 0.5s;
+        }
+        .gall-item:hover .gall-ph { transform: scale(1.04); }
+        .gall-cap {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 1rem 1.2rem; background: linear-gradient(to top, rgba(250,246,241,0.95), transparent);
+            font-family: 'Playfair Display', serif; font-size: 0.95rem; color: var(--text);
+            opacity: 0; transition: opacity 0.35s;
+        }
+        .gall-item:hover .gall-cap { opacity: 1; }
+
+        /* BOOKING */
+        .booking-section { background: var(--bg-warm); }
+        .booking-wrap {
+            max-width: 680px; margin: 0 auto; background: var(--cream);
+            border: 1px solid var(--border); border-radius: 12px;
+            padding: 2.5rem; box-shadow: 0 8px 30px var(--shadow);
+        }
+        .bk-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1rem; }
+        .bk-field { display: flex; flex-direction: column; gap: 0.4rem; }
+        .bk-field label {
+            font-size: 0.75rem; letter-spacing: 1.2px; text-transform: uppercase;
+            color: var(--text-light); font-weight: 600;
+        }
+        .bk-field input, .bk-field select, .bk-field textarea {
+            padding: 0.85rem 1rem; border: 1px solid var(--border); border-radius: 6px;
+            background: var(--bg); color: var(--text); font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.92rem; transition: border-color 0.3s; outline: none;
+        }
+        .bk-field input:focus, .bk-field select:focus, .bk-field textarea:focus { border-color: var(--accent); }
+        .bk-field input::placeholder, .bk-field textarea::placeholder { color: var(--text-muted); }
+        .bk-field textarea { resize: vertical; }
+        .bk-note { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 0.8rem; }
+
+        /* CONTACTS */
+        .contacts-section { background: var(--bg-warm); }
+        .ct-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; max-width: 950px; margin: 0 auto; }
+        .ct-list { display: flex; flex-direction: column; gap: 1.8rem; }
+        .ct-item { display: flex; gap: 1rem; align-items: flex-start; }
+        .ct-icon {
+            width: 48px; height: 48px; background: rgba(92,138,110,0.1);
+            border: 1px solid var(--border); border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; flex-shrink: 0;
+        }
+        .ct-item h4 { font-size: 0.95rem; color: var(--text); margin-bottom: 0.2rem; font-family: 'Source Sans 3', sans-serif; font-weight: 600; }
+        .ct-item p { color: var(--text-light); font-size: 0.9rem; }
+        .ct-map {
+            background: var(--cream); border: 1px solid var(--border); border-radius: 10px;
+            min-height: 280px; display: flex; align-items: center; justify-content: center;
+            flex-direction: column; gap: 0.8rem;
+        }
+        .ct-map .map-ico { font-size: 2.5rem; opacity: 0.4; }
+        .ct-map .map-addr { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--text); }
+        .ct-map p { color: var(--text-muted); font-size: 0.82rem; }
+
+        /* FOOTER */
+        footer {
+            background: var(--bg-wood-dark); color: rgba(255,255,255,0.8);
+            padding: 3rem 6%; text-align: center;
+        }
+        .ft-logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: #fff; margin-bottom: 0.8rem; }
+        .ft-logo em { color: var(--bg-wood-light); }
+        .ft-sub { font-size: 0.82rem; opacity: 0.7; margin-bottom: 1.2rem; }
+        .ft-links { display: flex; gap: 1rem; justify-content: center; }
+        .ft-links a {
+            width: 42px; height: 42px; border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.8rem;
+            font-weight: 600; transition: all 0.3s;
+        }
+        .ft-links a:hover { border-color: #fff; color: #fff; background: rgba(255,255,255,0.1); }
+        .ft-copy { margin-top: 2rem; font-size: 0.72rem; opacity: 0.5; }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .nav-burger { display: block; }
+            .about-row, .ct-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .bk-row { grid-template-columns: 1fr; }
+            .gall-grid { grid-template-columns: 1fr 1fr; }
+            .gall-item:first-child { grid-column: span 2; }
+            .hero-btns { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+
+<nav id="navbar">
+    <a href="#" class="nav-logo">Карелия <em>®</em></a>
+    <ul class="nav-links">
+        <li><a href="#services">Услуги</a></li>
+        <li><a href="#about">О комплексе</a></li>
+        <li><a href="#gallery">Галерея</a></li>
+        <li><a href="#booking">Бронирование</a></li>
+        <li><a href="#contacts">Контакты</a></li>
+    </ul>
+    <button class="nav-burger" onclick="document.querySelector('.nav-links').classList.toggle('show')" aria-label="Меню">
+        <span></span><span></span><span></span>
+    </button>
+</nav>
+
+<section class="hero" id="hero">
+    <div class="hero-steam"></div>
+    <div class="hero-content">
+        <div class="hero-icon reveal">♨️</div>
+        <h1 class="reveal reveal-delay-1">Банный комплекс<br><em>«Карелия»</em></h1>
+        <p class="hero-sub reveal reveal-delay-2">Настоящая русская баня в сердце Карелии. Жар парной, прохлада купели и покой северной природы.</p>
+        <div class="hero-btns reveal reveal-delay-3">
+            <a href="#booking" class="btn btn-green">Забронировать</a>
+            <a href="#services" class="btn btn-ghost">Узнать больше</a>
+        </div>
+    </div>
+    <div class="hero-scroll"><span>Вниз</span><i></i></div>
+</section>
+
+<section class="section" id="services">
+    <div class="section-head reveal">
+        <div class="section-tag">Что мы предлагаем</div>
+        <h2 class="section-title">Наши услуги</h2>
+        <div class="section-line"></div>
+    </div>
+    <div class="svc-grid">
+        <div class="svc-card reveal reveal-delay-1">
+            <div class="svc-emoji">🧖‍♂️</div>
+            <h3>Русская парная</h3>
+            <p>Классическая парная с берёзовым и дубовым веником. Каменка из карельского камня, ключевая вода. Мягкий жар до 85°C.</p>
+            <div class="svc-price">1 500 ₽ <small>/ час</small></div>
+        </div>
+        <div class="svc-card reveal reveal-delay-2">
+            <div class="svc-emoji">🧖‍♀️</div>
+            <h3>Финская сауна</h3>
+            <p>Сухой жар до 100°C для глубокого прогрева. Еловые веники, эфирные масла кедра и пихты.</p>
+            <div class="svc-price">1 800 ₽ <small>/ час</small></div>
+        </div>
+        <div class="svc-card reveal reveal-delay-3">
+            <div class="svc-emoji">❄️</div>
+            <h3>Купель и снежная комната</h3>
+            <p>Контрастное погружение в деревянную купель с ключевой водой. Снежная комната для закалки.</p>
+            <div class="svc-price">600 ₽ <small>/ посещение</small></div>
+        </div>
+        <div class="svc-card reveal reveal-delay-1">
+            <div class="svc-emoji">💆</div>
+            <h3>Массаж</h3>
+            <p>Классический, бановый с веником или ароматический с карельскими маслами. Расслабление для тела и духа.</p>
+            <div class="svc-price">2 500 ₽ <small>/ сеанс</small></div>
+        </div>
+        <div class="svc-card reveal reveal-delay-2">
+            <div class="svc-emoji">🌿</div>
+            <h3>Травяные ванны</h3>
+            <p>Ванны из карельских трав: ромашка, мята, чабрец, зверобай. Природное восстановление и релаксация.</p>
+            <div class="svc-price">1 800 ₽ <small>/ процедура</small></div>
+        </div>
+        <div class="svc-card reveal reveal-delay-3">
+            <div class="svc-emoji">🪵</div>
+            <h3>Зона отдыха</h3>
+            <p>Бревенатая беседка у камина. Чай из карельских трав, мёд, ягодные узвары и лёгкие закуски.</p>
+            <div class="svc-price">1 000 ₽ <small>/ час</small></div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="about" style="background:var(--bg-warm);">
+    <div class="about-row">
+        <div class="about-text reveal">
+            <div class="section-tag">О комплексе</div>
+            <h3>Традиции и уют</h3>
+            <p>Банный комплекс «Карелия» — это место, где древние северные традиции банивания сочетаются с современным комфортом.</p>
+            <p>Стены из карельской сосны, парная на ключевой воде, натуральные веники и травы — всё здесь создано для вашего здоровья и покоя.</p>
+            <p>Мы принимаем гостей ежедневно и поможем выбрать идеальную программу для семьи, компании или одиночного отдыха.</p>
+            <a href="#booking" class="btn btn-green" style="margin-top:1rem;">Забронировать</a>
+        </div>
+        <div class="about-stats reveal reveal-delay-1">
+            <div class="stat-box">
+                <div class="num">10+</div>
+                <div class="lbl">Лет работы</div>
+            </div>
+            <div class="stat-box">
+                <div class="num">4 000+</div>
+                <div class="lbl">Гостей в год</div>
+            </div>
+            <div class="stat-box">
+                <div class="num">4</div>
+                <div class="lbl">Парных</div>
+            </div>
+            <div class="stat-box">
+                <div class="num">100%</div>
+                <div class="lbl">Натуральное дерево</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="gallery">
+    <div class="section-head reveal">
+        <div class="section-tag">Атмосфера</div>
+        <h2 class="section-title">Галерея</h2>
+        <div class="section-line"></div>
+    </div>
+    <div class="gall-grid">
+        <div class="gall-item reveal">
+            <div class="gall-ph">🏔️</div>
+            <div class="gall-cap">Вид на озеро</div>
+        </div>
+        <div class="gall-item reveal reveal-delay-1">
+            <div class="gall-ph">🧖</div>
+            <div class="gall-cap">Парная</div>
+        </div>
+        <div class="gall-item reveal reveal-delay-2">
+            <div class="gall-ph">🪵</div>
+            <div class="gall-cap">Зона отдыха</div>
+        </div>
+        <div class="gall-item reveal reveal-delay-1">
+            <div class="gall-ph">♨️</div>
+            <div class="gall-cap">Купель</div>
+        </div>
+        <div class="gall-item reveal reveal-delay-2">
+            <div class="gall-ph">🌲</div>
+            <div class="gall-cap">Территория</div>
+        </div>
+        <div class="gall-item reveal reveal-delay-3">
+            <div class="gall-ph">🍵</div>
+            <div class="gall-cap">Чайный стол</div>
+        </div>
+    </div>
+</section>
+
+<section class="section booking-section" id="booking">
+    <div class="section-head reveal">
+        <div class="section-tag">Онлайн-запись</div>
+        <h2 class="section-title">Бронирование</h2>
+        <div class="section-line"></div>
+    </div>
+    <div class="booking-wrap reveal">
+        <div class="bk-row">
+            <div class="bk-field">
+                <label>Ваше имя</label>
+                <input type="text" placeholder="Как к вам обращаться">
+            </div>
+            <div class="bk-field">
+                <label>Телефон</label>
+                <input type="tel" placeholder="+7 (___) ___-__-__">
+            </div>
+        </div>
+        <div class="bk-row">
+            <div class="bk-field">
+                <label>Дата</label>
+                <input type="date">
+            </div>
+            <div class="bk-field">
+                <label>Время</label>
+                <select>
+                    <option value="">Выберите время</option>
+                    <option>10:00</option><option>11:00</option><option>12:00</option>
+                    <option>13:00</option><option>14:00</option><option>15:00</option>
+                    <option>16:00</option><option>17:00</option><option>18:00</option>
+                    <option>19:00</option><option>20:00</option><option>21:00</option>
+                </select>
+            </div>
+        </div>
+        <div class="bk-row">
+            <div class="bk-field">
+                <label>Услуга</label>
+                <select>
+                    <option value="">Выберите услугу</option>
+                    <option>Русская парная — 1 500 ₽/час</option>
+                    <option>Финская сауна — 1 800 ₽/час</option>
+                    <option>Купель и снежная комната — 600 ₽</option>
+                    <option>Массаж — 2 500 ₽</option>
+                    <option>Травяные ванны — 1 800 ₽</option>
+                    <option>Зона отдыха — 1 000 ₽/час</option>
+                </select>
+            </div>
+            <div class="bk-field">
+                <label>Гости</label>
+                <select>
+                    <option value="">Сколько человек</option>
+                    <option>1 чел.</option><option>2 чел.</option><option>3 чел.</option>
+                    <option>4 чел.</option><option>5 чел.</option><option>6+ чел.</option>
+                </select>
+            </div>
+        </div>
+        <div class="bk-field" style="margin-top:0.5rem;">
+            <label>Комментарий</label>
+            <textarea placeholder="Пожелания, особые требования..." rows="3"></textarea>
+        </div>
+        <button class="btn btn-green" style="margin-top:1.2rem;width:100%;">Отправить заявку</button>
+        <p class="bk-note">Мы перезвоним для подтверждения в течение 15 минут</p>
+    </div>
+</section>
+
+<section class="section contacts-section" id="contacts">
+    <div class="section-head reveal">
+        <div class="section-tag">Как добраться</div>
+        <h2 class="section-title">Контакты</h2>
+        <div class="section-line"></div>
+    </div>
+    <div class="ct-grid">
+        <div class="ct-list reveal">
+            <div class="ct-item">
+                <div class="ct-icon">📍</div>
+                <div><h4>Адрес</h4><p>г. Петрозаводск, ул. Лесная, д. 15</p></div>
+            </div>
+            <div class="ct-item">
+                <div class="ct-icon">📞</div>
+                <div><h4>Телефон</h4><p>+7 (814) 200-00-00</p></div>
+            </div>
+            <div class="ct-item">
+                <div class="ct-icon">⏰</div>
+                <div><h4>Режим работы</h4><p>Ежедневно: 10:00 — 23:00</p></div>
+            </div>
+            <div class="ct-item">
+                <div class="ct-icon">✉️</div>
+                <div><h4>Email</h4><p>info@kareliya-banya.ru</p></div>
+            </div>
+            <div class="ct-item">
+                <div class="ct-icon">📱</div>
+                <div><h4>Мессенджеры</h4><p>Telegram / WhatsApp — скоро</p></div>
+            </div>
+        </div>
+        <div class="ct-map reveal reveal-delay-1">
+            <div class="map-ico">🗺️</div>
+            <div class="map-addr">г. Петрозаводск, ул. Лесная, д. 15</div>
+            <p>Рядом с озером Онежское</p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="ft-logo">Карелия <em>®</em></div>
+    <p class="ft-sub">Банный комплекс — традиции северной бани</p>
+    <div class="ft-links">
+        <a href="#">TG</a>
+        <a href="#">WA</a>
+        <a href="#">IG</a>
+    </div>
+    <p class="ft-copy">© 2024 Банный комплекс «Карелия». Все права защищены.</p>
+</footer>
+
+<script>
+    const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    const nav = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+        nav.classList.toggle('scrolled', window.scrollY > 40);
+    });
+</script>
+
+</body>
+</html>
